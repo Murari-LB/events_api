@@ -8,16 +8,12 @@ class Api::V1::EventsController < ApplicationController
 	end
 
 	def create
-  	unless event_params.blank?
 	  	@event = Event.new(event_params)
 	  	if @event.save
 	  		render json: { data: @event, message: "Event record has been added successfully" }
 	  	else
 	  		render json: { data: @event, message: "Invalid Event Record Details", error: @event.errors }
 	  	end
-	  else
-			render json: { data: @event, message: "Invalid Input" }
-	  end
 	end
 
 	def edit
@@ -62,9 +58,16 @@ class Api::V1::EventsController < ApplicationController
 	end
 
 	def interested_users
-	 	@users =  User.joins(events: :invitations).where("invitations.interested=? and events.id=?", true, params[:id])
+	 	@users =  User.joins(events: :invitations).where("invitations.interested=? and events.id=?", true, params[:id]).group("users.id")
 		render json: {data: @users}
 	end
+
+	def cancelled_users
+		@users = User.joins(events: :invitations).where("invitations.confirmed=?  and events.id=?", false, params[:id]).group("users.id")
+		render json: {data: @users}
+	end
+
+	User.joins(events: :invitations).where("invitations.confirmed=?  and events.id=?", false, 1)
 
 	def add_user_to_confirmed_attendees
 		@invitation = Invitation.new(event_id: params[:id], user_id: params[:user_id], confirmed: true)
@@ -73,11 +76,19 @@ class Api::V1::EventsController < ApplicationController
 	  	else
 	  		render json: { data: @invitation, message: "Invalid Record Details", error: @invitation.errors }
 	  	end
+	end
 
+	def remove_user_from_confirmed_attendees
+		@invitation = Invitation.where(event_id: params[:id], user_id: params[:user_id], confirmed: true).first
+		if @invitation && @invitation.update(confirmed: false)
+			render json: { data: @invitation, message: "User has been removed from confirmed attendees list " }
+	  	else
+	  		render json: { data: @invitation, message: "Invalid Record Details", error: @invitation.errors }
+	  	end
 	end
 
 	def my_calendar
-		@calendar_details = current_user.events.where("date >=?", Date.today).pluck(:date)
+		@calendar_details = User.where(id: params[:id]).first.events.where("date >=?", Date.today).pluck(:date)
 		render json: {data: @calendar_details}
 	end
 

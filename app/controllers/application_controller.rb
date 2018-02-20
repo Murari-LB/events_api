@@ -3,6 +3,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :null_session
 	# before_action :authenticate_user!
 	before_action :authorization_token
+	
 	protected
 	def devise_parameter_sanitizer
 		if resource_class == User

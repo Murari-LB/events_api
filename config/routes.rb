@@ -8,7 +8,10 @@ Rails.application.routes.draw do
         get :rsvp_count, on: :member
         get :rsvp_cancelled_count, on: :member
         get :interested_users, on: :member
-  			get :add_user_to_confirmed_attendees, on: :member
+        get :cancelled_users, on: :member
+        get :add_user_to_confirmed_attendees, on: :member
+  			put :remove_user_from_confirmed_attendees, on: :member
+        get :my_calendar, on: :collection
   		end
   		resources :users
   	end
