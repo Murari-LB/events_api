@@ -29,6 +29,6 @@ class Api::V1::RegistrationsController < ApplicationController
 	private
 
 	def registration_params
-		params.permit(:username, :email, :password, :password_confirmation)
+		params.permit(:username, :admin, :email, :password, :password_confirmation)
 	end
 end
