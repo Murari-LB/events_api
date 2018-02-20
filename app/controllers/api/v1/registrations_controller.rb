@@ -1,14 +1,14 @@
 class Api::V1::RegistrationsController < ApplicationController
-	def create
-		user = User.new(registration_params)
-		if user.save
-			render json: user, status: 201
-		else
-			render json: { errors: user.errors }, status: 422
-		end
-	end
+  def create
+    user = User.new(registration_params)
+    if user.save
+      render json: user, status: 201
+    else
+      render json: { errors: user.errors }, status: 422
+    end
+  end
 
-	def update
+  def update
     if @current_user.update(update_params)
       render json: @current_user, status: 202
     else
@@ -26,9 +26,9 @@ class Api::V1::RegistrationsController < ApplicationController
     end
   end
 
-	private
+  private
 
-	def registration_params
-		params.permit(:username, :email, :password, :password_confirmation)
-	end
+  def registration_params
+    params.permit(:username, :admin, :email, :password, :password_confirmation)
+  end
 end
