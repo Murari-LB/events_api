@@ -4,7 +4,12 @@ Rails.application.routes.draw do
   	namespace :v1 do
 
   		devise_for :users, :controller => { :sessions => 'sessions', :registrations => 'registrations' }
-  		resources :events
+  		resources :events do
+        get :rsvp_count, on: :member
+        get :rsvp_cancelled_count, on: :member
+        get :interested_users, on: :member
+  			get :add_user_to_confirmed_attendees, on: :member
+  		end
   		resources :users
   	end
   end
